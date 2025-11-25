@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Приложение задач, заметок" />
+    <!-- <link rel="stylesheet" href="./reset.css" /> -->
+    <link rel="stylesheet" href="./style.css" />
+    <title>Note App</title>
+  </head>
+  <body>
+    <div class="app-container">
+      <header class="app-header">
+        <h1>Мои задачи</h1>
+      </header>
+      <div class="control-panel">
+        <!-- <button id="showTasksBtn" class="btn btn-primary active">Задачи</button> -->
+        <!-- <button id="showNotesBtn" class="btn btn-secondary">Заметки</button> -->
+      </div>
+      <div class="create-section">
+        <div id="taskFormSection" class="form-container">
+          <h2>Создать новую задачу</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="title">Заголовок:</label>
+              <input
+                type="text"
+                id="taskTitleInput"
+                placeholder="Название задачи"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="priority">Приоритет:</label>
+              <select id="taskPrioritySelect">
+                <option value="low">Низкий приоритет</option>
+                <option value="medium">Средний приоритет</option>
+                <option value="high">Высокий приоритет</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="description">Описание:</label>
+            <textarea
+              id="taskDescriptionInput"
+              rows="3"
+              placeholder="Введите описание...."
+            ></textarea>
+          </div>
+          <!-- <textarea id="taskDescriptionInput" placeholder="Описание"></textarea> -->
+          <div class="form-group">
+            <label for="dueDate">Срок выполнения:</label>
+            <input type="date" id="dueDate" />
+          </div>
+
+          <div class="labels-input">
+            <label>Метки задачи:</label>
+            <div class="form-row">
+              <input
+                type="text"
+                id="newLabelInput"
+                placeholder="Введите название метки"
+                style="flex: 2"
+              />
+              <input type="color" id="labelColorInput" value="#a790f9" />
+              <!-- style="flex: 1" -->
+
+              <button
+                type="button"
+                onclick="addLabelToTask()"
+                class="btn btn-secondary"
+                style="flex: 1"
+              >
+                Добавить
+              </button>
+            </div>
+
+            <div id="labelsPreview" class="labels-preview"></div>
+            <div class="quick-labels-title" style="margin-top: 10px">
+              Быстрые метки:
+            </div>
+            <div class="available-tags" style="margin-top: 10px">
+              <span
+                class="tag-option"
+                style="background: #a790f9"
+                onclick="addLabel('Учеба', '#a790f9')"
+                >Учеба</span
+              >
+              <span
+                class="tag-option"
+                style="background: #de95eb"
+                onclick="addLabel('Работа', '#de95eb')"
+                >Работа</span
+              >
+              <span
+                class="tag-option"
+                style="background: #fcfc86"
+                onclick="addLabel('Срочно', '#fcfc86')"
+                >Срочно</span
+              >
+              <span
+                class="tag-option"
+                style="background: #b5b0fa"
+                onclick="addLabel('Проект', '#b5b0fa')"
+                >Проект</span
+              >
+              <span
+                class="tag-option"
+                style="background: #a0f699"
+                onclick="addLabel('Отдых', '#a0f699')"
+                >Отдых</span
+              >
+              <span
+                class="tag-option"
+                style="background: #b9f9ed"
+                onclick="addLabel('Спорт', '#b9f9ed')"
+                >Спорт</span
+              >
+              <span
+                class="tag-option"
+                style="background: #fdea7a"
+                onclick="addLabel('Дом', '#fdea7a')"
+                >Дом</span
+              >
+              <span
+                class="tag-option"
+                style="background: #edafc5"
+                onclick="addLabel('Личное', '#edafc5')"
+                >Личное</span
+              >
+            </div>
+          </div>
+          <button
+            onclick="create_task()"
+            class="btn btn-primary"
+            style="margin-top: 20px"
+          >
+            Создать задачу
+          </button>
+        </div>
+
+        <!-- <div id="noteFormSection" class="form-container" style="display: none">
+          <h3>Создать новую заметку</h3>
+          <input type="text" id="noteTitleInput"placeholder="Заголовок заметки"required/>
+          <textarea id="noteContentInput"placeholder="Текст"required></textarea>
+          <button onclick="createNote()" class="btn btn-primary">Создать заметку</button>
+        </div> -->
+      </div>
+      <div class="data-section">
+        <div class="filters">
+          <input type="text" id="search" placeholder="Поиск задач..." />
+          <select id="filterPriority">
+            <option value="all">Все приоритеты</option>
+            <option value="high">Низкий</option>
+            <option value="medium">Средний</option>
+            <option value="low">Выссокий</option>
+          </select>
+          <button class="clearFilters">Сбросить фильтры</button>
+        </div>
+
+        <div id="tasksListSection" class="data-container">
+          <h2>Активные задачи</h2>
+          <div id="tasksContainer"></div>
+        </div>
+        <div id="notesListSection" class="data-container" style="display: none">
+          <h2>Мои заметки</h2>
+          <div id="notesContainer"></div>
+        </div>
+      </div>
+    </div>
+    <div id="editModal" class="modal">
+      <div class="modal-content">
+        <h3 id="modalTitle">Редактирование</h3>
+        <div id="modalBody"></div>
+        <div style="margin-top: 25px; display: flex; gap: 15px">
+          <button onclick="close_change()" class="btn btn-secondary">
+            Отмена
+          </button>
+          <button onclick="save_edit()" class="btn btn-primary">
+            Сохранить
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- <script src="script.js"></script> -->
+  </body>
+</html>
